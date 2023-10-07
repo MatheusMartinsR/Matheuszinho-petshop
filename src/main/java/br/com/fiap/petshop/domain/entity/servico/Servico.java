@@ -1,41 +1,52 @@
 package br.com.fiap.petshop.domain.entity.servico;
 
 import br.com.fiap.petshop.domain.entity.animal.Animal;
-import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "TB_SERVICO")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TB_SERVICO")
+public abstract class Servico {
 
-public  class Servico {
-
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_SERVICO")
+    @Column(name = "ID_SERVICO")
     private Long id;
 
+    @Column(name = "VALOR_SERVICO")
     private BigDecimal valor;
 
-    @JsonbDateFormat
-    private LocalDateTime abertura = LocalDateTime.now();
+    @Column(name = "ABERTURA_SERVICO")
+    private LocalDateTime abertura;
 
-    @JsonbDateFormat
+    @Column(name = "AUTORIZACAO_SERVICO")
     private LocalDateTime autorizacao;
 
-    @JsonbDateFormat
+    @Column(name = "CONCLUSAO_SERVICO")
     private LocalDateTime conclusao;
 
+    @Column(name = "DESC_SERVICO")
     private String descricao;
 
+    @Column(name = "OBS_SERVICO")
     private String observacao;
 
-
-
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "ANIMAL",
+            referencedColumnName = "ID_ANIMAL",
+            foreignKey = @ForeignKey(name = "FK_SERVICO_ANIMAL")
+    )
     private Animal animal;
 
-    protected Servico() {
+    public Servico() {
     }
 
-    protected Servico(Long id, BigDecimal valor, LocalDateTime abertura, LocalDateTime autorizacao, LocalDateTime conclusao, String descricao, String observacao, Animal animal) {
+    public Servico(Long id, BigDecimal valor, LocalDateTime abertura, LocalDateTime autorizacao, LocalDateTime conclusao, String descricao, String observacao, Animal animal) {
         this.id = id;
         this.valor = valor;
         this.abertura = abertura;
@@ -111,7 +122,6 @@ public  class Servico {
         return this;
     }
 
-
     public Animal getAnimal() {
         return animal;
     }
@@ -120,6 +130,7 @@ public  class Servico {
         this.animal = animal;
         return this;
     }
+
 
     @Override
     public String toString() {
@@ -131,6 +142,7 @@ public  class Servico {
                 ", conclusao=" + conclusao +
                 ", descricao='" + descricao + '\'' +
                 ", observacao='" + observacao + '\'' +
+                ", animal=" + animal +
                 '}';
     }
 }

@@ -17,18 +17,19 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 @ApplicationPath("/api")
 public class Main {
     public static final String BASE_URI = "http://localhost/api/";
 
-    public static final String PERSISTENCE_UNIT = "oracle-home";
+    public static final String PERSISTENCE_UNIT = "oracle";
 
     @PersistenceContext
     static EntityManager manager;
 
     public static HttpServer startServer() {
-
 
         final ResourceConfig rc = new ResourceConfig()
                 // Configure container response filters (CORSFilter)
@@ -36,8 +37,8 @@ public class Main {
                 // .register( UpdatableBCrypt.build(10))
                 // Configure container request filters (JsTokenFilterNeeded)
                 .register(JsTokenFilterNeeded.class)
-                .register( EntityManagerFactoryProvider.class )
-                .register( EntityManagerProvider.class )
+                .register(EntityManagerFactoryProvider.class)
+                .register(EntityManagerProvider.class)
                 .register(
                         new AbstractBinder() {
                             @Override
@@ -49,9 +50,8 @@ public class Main {
                                         .to(EntityManager.class)
                                         .in(RequestScoped.class);
                             }
-                        }
-                ).register(EntityManagerFactoryProvider.of(PERSISTENCE_UNIT).provide())
-
+                        })
+                .register(EntityManagerFactoryProvider.of(PERSISTENCE_UNIT).provide())
 
                 .packages("br.com.fiap.petshop.domain.resources", "br.com.fiap.petshop.infra.security.resources");
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
@@ -59,7 +59,8 @@ public class Main {
 
     public static void main(String[] args) {
         final HttpServer server = startServer();
-        System.out.printf( "Petshop app started with endpoints available as %s%nHit Ctrl-C to stop it....%n", BASE_URI + "hello");
+        System.out.printf("Petshop app started with endpoints available as %s%nHit Ctrl-C to stop it....%n",
+                BASE_URI + "hello");
         try {
             System.in.read();
             server.stop();

@@ -46,7 +46,7 @@ public class CachorroRepository implements Repository<Cachorro, Long> {
 
 
     @Override
-    public  Cachorro persist(Cachorro animal) {
+    public Cachorro persist(Cachorro animal) {
         //Não posso confiar no usuário:
         var pfService = PessoaFisicaService.of( Main.PERSISTENCE_UNIT );
         manager.getTransaction().begin();
@@ -58,7 +58,7 @@ public class CachorroRepository implements Repository<Cachorro, Long> {
     }
 
     @Override
-    public  Cachorro update(Cachorro animal) {
+    public Cachorro update(Cachorro animal) {
 
         //Será que existe animal com o número informado?
         Cachorro dog = manager.find( Cachorro.class, animal.getId() );
